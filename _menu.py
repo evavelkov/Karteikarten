@@ -1,8 +1,8 @@
 from pyfiglet import Figlet
 from start_flashcards import start_flashcards
-from create_flashcards import create_flashcards
-from edit_flashcards import edit_flashcards
-from delete_flashcards import delete_flashcards
+#from create_flashcards import create_flashcards
+#from edit_flashcards import edit_flashcards
+#from delete_flashcards import delete_flashcards
 
 f = Figlet(font='doom')
 
