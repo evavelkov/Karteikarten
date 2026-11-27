@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "macros.html" import set_tile %}
+{% block title %}Kartensets – Karteikarten{% endblock %}
+{% block crumbs %}<span>›</span> Kartensets{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Kartensets</h1>
+  <a class="btn primary" href="{{ url_for('new_set') }}">+ Neues Set erstellen</a>
+</div>
+
+{% if sets %}
+<div class="grid">
+  {% for s in sets %}{{ set_tile(s) }}{% endfor %}
+</div>
+{% else %}
+<p class="empty">Noch keine Kartensets. Klick oben rechts auf „Neues Set erstellen“.</p>
+{% endif %}
+{% endblock %}

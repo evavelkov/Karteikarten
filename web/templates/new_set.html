@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Neues Kartenset – Karteikarten{% endblock %}
+{% block crumbs %}<span>›</span> <a href="{{ url_for('sets') }}">Kartensets</a> <span>›</span> Neues Set{% endblock %}
+
+{% macro card_row(q, a, n) %}
+<div class="new-card">
+  <span class="row-num">{{ n }}</span>
+  <label>Question<textarea name="question" rows="2" placeholder="Frage / Vorderseite">{{ q }}</textarea></label>
+  <label>Answer<textarea name="answer" rows="2" placeholder="Antwort / Rückseite">{{ a }}</textarea></label>
+  <button type="button" class="icon-btn remove-row" aria-label="Karte entfernen" title="Karte entfernen">✕</button>
+</div>
+{% endmacro %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Neues Kartenset</h1>
+</div>
+
+<form method="post" class="panel">
+  <div class="fields-2">
+    <label>Name des Sets
+      <input name="name" value="{{ form.name }}" placeholder="z. B. Verben" required autofocus>
+    </label>
+    <label>Ordner <span class="muted">(optional)</span>
+      <select name="folder_id">
+        <option value="">Kein Ordner</option>
+        {% for f in folders %}
+        <option value="{{ f.id }}" {{ 'selected' if f.id == form.folder_id }}>{{ f.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+  <label>Beschreibung <span class="muted">(optional)</span>
+    <input name="description" value="{{ form.description }}">
+  </label>
+
+  <h2 class="section-title">Karten</h2>
+  <div id="card-rows">
+    {% for q, a in form.cards %}{{ card_row(q, a, loop.index) }}{% endfor %}
+  </div>
+  <template id="card-row-tpl">{{ card_row('', '', '') }}</template>
+
+  <button type="button" class="btn add-row" id="add-row">+ Weitere Karte</button>
+
+  <footer class="form-foot">
+    <a class="btn" href="{{ url_for('folder', folder_id=form.folder_id) if form.folder_id else url_for('sets') }}">Abbrechen</a>
+    <button class="btn primary">Set speichern</button>
+  </footer>
+</form>
+{% endblock %}

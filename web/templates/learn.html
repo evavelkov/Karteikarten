@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "macros.html" import set_crumbs %}
+{% block title %}Lernen: {{ card_set.name }}{% endblock %}
+{% block crumbs %}
+{{ set_crumbs(card_set) }}
+<span>›</span> <a href="{{ url_for('card_set', set_id=card_set.id) }}">{{ card_set.name }}</a>
+<span>›</span> Lernen
+{% endblock %}
+{% block content %}
+{% if not cards %}
+  <p class="empty">Dieses Set hat noch keine Karten. <a href="{{ url_for('card_set', set_id=card_set.id) }}">Karten hinzufügen</a></p>
+{% else %}
+<div class="learn">
+  <div class="learn-bar">
+    <div class="progress"><div id="progress-fill"></div></div>
+    <span id="progress-text"></span>
+    <label class="toggle"><input type="checkbox" id="reverse"> Seiten tauschen</label>
+    <button class="btn small" id="shuffle">🔀 Mischen</button>
+  </div>
+
+  <div id="stage">
+    <div class="flip" id="flip" tabindex="0" aria-live="polite">
+      <div class="flip-inner">
+        <div class="face front"><span class="face-label">Frage</span><div id="front"></div></div>
+        <div class="face back"><span class="face-label">Antwort</span><div id="back"></div></div>
+      </div>
+    </div>
+    <p class="hint">Klicken oder <kbd>Leertaste</kbd> zum Umdrehen</p>
+
+    <div class="grade">
+      <button class="btn again" id="again">✗ Nochmal <kbd>1</kbd></button>
+      <button class="btn known" id="known">✓ Gewusst <kbd>2</kbd></button>
+    </div>
+  </div>
+
+  <div id="done" hidden>
+    <div class="done-box">
+      <div class="done-emoji">🎉</div>
+      <h2>Geschafft!</h2>
+      <p id="done-text"></p>
+      <button class="btn primary" id="restart">Nochmal von vorn</button>
+      <a class="btn" href="{{ url_for('card_set', set_id=card_set.id) }}">Zurück zum Set</a>
+    </div>
+  </div>
+</div>
+
+<script>window.CARDS = {{ cards|tojson }};</script>
+<script src="{{ url_for('static', filename='learn.js') }}"></script>
+{% endif %}
+{% endblock %}

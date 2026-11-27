@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "macros.html" import set_tile, set_picker %}
+{% block title %}{{ folder.name }} – Karteikarten{% endblock %}
+{% block crumbs %}<span>›</span> <a href="{{ url_for('folders') }}">Ordner</a> <span>›</span> {{ folder.name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>📁 {{ folder.name }}</h1>
+  <div class="actions">
+    <a class="btn primary" href="{{ url_for('new_set', folder_id=folder.id) }}">+ Neues Set</a>
+    <button class="btn" type="button" data-open="add-sets">Sets hinzufügen</button>
+    <details class="menu">
+      <summary class="btn">Ordner bearbeiten</summary>
+      <div class="menu-body">
+        <form method="post" action="{{ url_for('rename_folder', folder_id=folder.id) }}">
+          <label>Name<input name="name" value="{{ folder.name }}" required></label>
+          <button class="btn primary">Speichern</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_folder', folder_id=folder.id) }}"
+              onsubmit="return confirm('Ordner löschen? Die Kartensets darin bleiben erhalten.')">
+          <button class="btn danger">Ordner löschen</button>
+        </form>
+      </div>
+    </details>
+  </div>
+</div>
+
+{% if sets %}
+<div class="grid">
+  {% for s in sets %}
+    {{ set_tile(s, show_folder=false, remove_url=url_for('remove_set_from_folder', folder_id=folder.id, set_id=s.id)) }}
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty">Dieser Ordner ist noch leer. Erstelle ein neues Set oder füge bestehende hinzu.</p>
+{% endif %}
+
+<dialog id="add-sets" class="modal">
+  <form method="post" action="{{ url_for('add_sets_to_folder', folder_id=folder.id) }}">
+    <header class="modal-head">
+      <h2>Sets zu „{{ folder.name }}“ hinzufügen</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Schließen">✕</button>
+    </header>
+    <fieldset>
+      <legend>Kartensets auswählen</legend>
+      {{ set_picker(other_sets) }}
+    </fieldset>
+    <footer class="modal-foot">
+      <button type="button" class="btn" data-close>Abbrechen</button>
+      {% if other_sets %}<button class="btn primary">Hinzufügen</button>{% endif %}
+    </footer>
+  </form>
+</dialog>
+{% endblock %}

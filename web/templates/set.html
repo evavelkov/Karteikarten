@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "macros.html" import set_crumbs %}
+{% block title %}{{ card_set.name }} – Karteikarten{% endblock %}
+{% block crumbs %}{{ set_crumbs(card_set) }} <span>›</span> {{ card_set.name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ card_set.name }}</h1>
+    {% if card_set.description %}<p class="sub">{{ card_set.description }}</p>{% endif %}
+  </div>
+  <div class="actions">
+    {% if cards %}<a class="btn primary" href="{{ url_for('learn', set_id=card_set.id) }}">▶ Lernen ({{ cards|length }})</a>{% endif %}
+    <details class="menu">
+      <summary class="btn">Set bearbeiten</summary>
+      <div class="menu-body">
+        <form method="post" action="{{ url_for('edit_set', set_id=card_set.id) }}">
+          <label>Name<input name="name" value="{{ card_set.name }}" required></label>
+          <label>Beschreibung<input name="description" value="{{ card_set.description }}"></label>
+          <label>Ordner
+            <select name="folder_id">
+              <option value="">Kein Ordner</option>
+              {% for f in folders %}
+              <option value="{{ f.id }}" {{ 'selected' if f.id == card_set.folder_id }}>{{ f.name }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <button class="btn primary">Speichern</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_set', set_id=card_set.id) }}"
+              onsubmit="return confirm('Kartenset mit allen Karten löschen?')">
+          <button class="btn danger">Set löschen</button>
+        </form>
+      </div>
+    </details>
+  </div>
+</div>
+
+<form id="neu" class="card-form new" method="post" action="{{ url_for('create_card', set_id=card_set.id) }}">
+  <textarea name="question" placeholder="Frage / Vorderseite" required rows="2" autofocus></textarea>
+  <textarea name="answer" placeholder="Antwort / Rückseite" required rows="2"></textarea>
+  <button class="btn primary">+ Karte hinzufügen</button>
+</form>
+
+{% if cards %}
+<ol class="card-list">
+  {% for c in cards %}
+  <li id="karte-{{ c.id }}" class="card-row">
+    <details>
+      <summary>
+        <span class="q">{{ c.question }}</span>
+        <span class="a">{{ c.answer }}</span>
+        <span class="edit-hint">✎</span>
+      </summary>
+      <div class="card-edit">
+        <form class="card-form" method="post" action="{{ url_for('edit_card', card_id=c.id) }}">
+          <textarea name="question" required rows="2">{{ c.question }}</textarea>
+          <textarea name="answer" required rows="2">{{ c.answer }}</textarea>
+          <button class="btn primary">Speichern</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_card', card_id=c.id) }}"
+              onsubmit="return confirm('Karte löschen?')">
+          <button class="btn danger small">Löschen</button>
+        </form>
+      </div>
+    </details>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p class="empty">Noch keine Karten in diesem Set.</p>
+{% endif %}
+{% endblock %}

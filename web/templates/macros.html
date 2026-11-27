@@ -1,0 +1,54 @@
+{# Kachel für ein Kartenset #}
+{% macro set_tile(s, show_folder=true, remove_url=none) %}
+<div class="tile set">
+  <a class="tile-link" href="{{ url_for('card_set', set_id=s.id) }}">
+    {% if show_folder %}
+    <div class="tile-folder">{{ '📁 ' ~ s.folder_name if s.folder_name else 'Kein Ordner' }}</div>
+    {% endif %}
+    <div class="tile-title">{{ s.name }}</div>
+    {% if s.description %}<div class="tile-desc">{{ s.description }}</div>{% endif %}
+    <div class="tile-meta">{{ s.card_count }} Karte{{ '' if s.card_count == 1 else 'n' }}</div>
+  </a>
+  <div class="tile-actions">
+    {% if s.card_count %}
+    <a class="btn small primary" href="{{ url_for('learn', set_id=s.id) }}">▶ Lernen</a>
+    {% endif %}
+    {% if remove_url %}
+    <form method="post" action="{{ remove_url }}">
+      <button class="btn small ghost" title="Set aus diesem Ordner nehmen (es wird nicht gelöscht)">Aus Ordner entfernen</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+
+{# Checkbox-Liste zum Auswählen bestehender Kartensets #}
+{% macro set_picker(sets) %}
+{% if sets %}
+<div class="picker">
+  {% for s in sets %}
+  <label class="pick">
+    <input type="checkbox" name="set_ids" value="{{ s.id }}">
+    <span class="pick-name">{{ s.name }}</span>
+    <span class="pick-meta">
+      {{ s.card_count }} Karte{{ '' if s.card_count == 1 else 'n' }}{% if s.folder_name %} · in „{{ s.folder_name }}“{% endif %}
+    </span>
+  </label>
+  {% endfor %}
+</div>
+{% else %}
+<p class="muted">Es gibt noch keine Kartensets, die du hinzufügen könntest.</p>
+{% endif %}
+{% endmacro %}
+
+
+{# Brotkrumen für Set-Seiten: über den Ordner oder über "Kartensets" #}
+{% macro set_crumbs(card_set) %}
+{% if card_set.folder_id %}
+<span>›</span> <a href="{{ url_for('folders') }}">Ordner</a>
+<span>›</span> <a href="{{ url_for('folder', folder_id=card_set.folder_id) }}">{{ card_set.folder_name }}</a>
+{% else %}
+<span>›</span> <a href="{{ url_for('sets') }}">Kartensets</a>
+{% endif %}
+{% endmacro %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <p class="greet">{{ greeting }} 👋</p>
+  <h1>Willkommen bei deinen Karteikarten!</h1>
+  <p class="lead">Was möchtest du heute als Nächstes lernen?</p>
+</section>
+
+<div class="choices">
+  <a class="choice" href="{{ url_for('folders') }}">
+    <span class="choice-icon">📁</span>
+    <h2>Ordner</h2>
+    <p>Deine Kartensets nach Themen sortiert.</p>
+    <span class="choice-meta">{{ stats.folders }} Ordner</span>
+    <span class="choice-go">Ordner öffnen →</span>
+  </a>
+  <a class="choice" href="{{ url_for('sets') }}">
+    <span class="choice-icon">🃏</span>
+    <h2>Kartensets</h2>
+    <p>Alle Sets auf einen Blick, direkt zum Lernen.</p>
+    <span class="choice-meta">{{ stats.sets }} Set{{ '' if stats.sets == 1 else 's' }} · {{ stats.cards }} Karte{{ '' if stats.cards == 1 else 'n' }}</span>
+    <span class="choice-go">Kartensets öffnen →</span>
+  </a>
+</div>
+{% endblock %}

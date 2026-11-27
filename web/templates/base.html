@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Karteikarten{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="{{ url_for('home') }}">🗂️ Karteikarten</a>
+    <nav class="crumbs">{% block crumbs %}{% endblock %}</nav>
+    <nav class="mainnav">
+      <a href="{{ url_for('folders') }}" class="{{ 'active' if request.endpoint in ('folders', 'folder') }}">📁 Ordner</a>
+      <a href="{{ url_for('sets') }}" class="{{ 'active' if request.endpoint in ('sets', 'new_set', 'card_set', 'learn') }}">🃏 Kartensets</a>
+    </nav>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

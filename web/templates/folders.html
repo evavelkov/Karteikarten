@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "macros.html" import set_picker %}
+{% block title %}Ordner – Karteikarten{% endblock %}
+{% block crumbs %}<span>›</span> Ordner{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Ordner</h1>
+  <button class="btn primary" type="button" data-open="new-folder">+ Ordner erstellen</button>
+</div>
+
+{% if folders %}
+<div class="grid">
+  {% for f in folders %}
+  <a class="tile folder" href="{{ url_for('folder', folder_id=f.id) }}">
+    <div class="tile-icon">📁</div>
+    <div class="tile-title">{{ f.name }}</div>
+    <div class="tile-meta">{{ f.set_count }} Set{{ '' if f.set_count == 1 else 's' }} · {{ f.card_count }} Karte{{ '' if f.card_count == 1 else 'n' }}</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="empty">Noch keine Ordner. Klick oben rechts auf „Ordner erstellen“.</p>
+{% endif %}
+
+<dialog id="new-folder" class="modal">
+  <form method="post" action="{{ url_for('create_folder') }}">
+    <header class="modal-head">
+      <h2>Neuen Ordner erstellen</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Schließen">✕</button>
+    </header>
+
+    <label>Name des Ordners
+      <input name="name" placeholder="z. B. Französisch" required autofocus>
+    </label>
+
+    <fieldset>
+      <legend>Bestehende Kartensets hinzufügen <span class="muted">(optional)</span></legend>
+      {{ set_picker(all_sets) }}
+    </fieldset>
+    {% if all_sets %}
+    <p class="note">Ein Set liegt immer in höchstens einem Ordner. Wählst du ein Set aus einem anderen Ordner, wird es hierher verschoben.</p>
+    {% endif %}
+
+    <footer class="modal-foot">
+      <button type="button" class="btn" data-close>Abbrechen</button>
+      <button class="btn primary">Ordner erstellen</button>
+    </footer>
+  </form>
+</dialog>
+{% endblock %}
